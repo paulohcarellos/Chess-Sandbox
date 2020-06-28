@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+
+using namespace std;
 
 class Position {
 
@@ -7,8 +10,12 @@ class Position {
 
 public:
 
-	Position() : x_(0), y_(0) {}
-	Position(int px, int py) : x_(px), y_(py) {}
-	int x() const { return x_; }
-	int y() const { return y_; }
+	Position();
+	Position(int, int);
+	Position(const Position& copy);
+	Position(string);
+	int x() const;
+	int y() const;
+	bool valid() const;
+	bool operator==(const Position& p) const;
 };

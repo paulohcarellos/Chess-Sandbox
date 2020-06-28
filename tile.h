@@ -1,37 +1,19 @@
 #pragma once
-#include "position.h"
+#include "piece.h"
 
 class Tile {
 
-	int type_;
-	int color_;
-	bool fresh_;
+	Piece* piece_;
 
-	Position self_;
-	
 public:
 
 	Tile();
-	Tile(int, int, Position);
-	int type() const;
-	int color() const;
-	Position position() const;
-	bool operator==(const Tile&);
-
+	Tile(Piece*);
+	bool empty() const;
+	char color() const;
+	char type() const;
+	void clear();
+	void receive(Piece*);
+	vector<Position> moves();
 };
 
-/* CODES:
-
-	00 - Empty
-	01 - Pawn
-	02 - Rook
-	03 - Horse
-	04 - Bishop
-	05 - Queen
-	06 - King
-
-	00 - None
-	01 - White
-	02 - Black
-
-*/

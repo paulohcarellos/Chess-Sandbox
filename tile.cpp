@@ -2,47 +2,62 @@
 
 Tile::Tile() {
 
-	type_ = 0;
-	color_ = 0;
-	fresh_ = false;
-	self_ = Position();
+	piece_ = NULL;
 }
 
-Tile::Tile(int type, int color, Position self) {
+Tile::Tile(Piece* piece) {
 
-	type_ = type;
-	color_ = color;
-	self_ = self;
-
-	if (type != 0)
-		fresh_ = true;
-
-	else
-		fresh_ = false;
+	piece_ = piece;
 }
 
-int Tile::type() const {
+bool Tile::empty() const {
 
-	return type_;
+	return (piece_ == NULL) ? true : false;
 }
 
-int Tile::color() const {
+char Tile::color() const {
 
-	return color_;
+	if (empty())
+		return ' ';
+
+	return piece_->color();
 }
 
-bool Tile::operator==(const Tile& check) {
+char Tile::type() const {
 
-	if (type_ == check.type_) {
-		if (color_ == check.color_) {
-			if (!(fresh_ xor check.fresh_)) {
-				if (self_.x() == check.self_.x()) {
-					if (self_.y() == check.self_.y())
-						return true;
-				}
-			}
-		}
-	}
+	if (empty())
+		return ' ';
 
-	return false;
+	if (dynamic_cast<Pawn*>(piece_))
+		return 'P';
+
+	if (dynamic_cast<Rook*>(piece_))
+		return 'R';
+
+	if (dynamic_cast<Horse*>(piece_))
+		return 'H';
+
+	if (dynamic_cast<Bishop*>(piece_))
+		return 'B';
+
+	if (dynamic_cast<Queen*>(piece_))
+		return 'Q';
+
+	if (dynamic_cast<King*>(piece_))
+		return 'K';
+}
+
+void Tile::clear() {
+
+	piece_ = NULL;
+}
+
+void Tile::receive(Piece* in) {
+
+	piece_ = in;
+}
+
+vector<Position> Tile::moves() {
+
+	return piece_->moves();
 }

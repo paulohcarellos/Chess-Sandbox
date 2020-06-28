@@ -1,16 +1,13 @@
 #include <iostream>
 #include "interface.h"
+#include "board.h"
 
 using namespace std;
 
 int main() {
 
-	ClassicalChess board;
-	Interface root(board);
-
-	root.start_game();
-
-
+	Interface root;
+	root.start();
 
 	return 0;
 }

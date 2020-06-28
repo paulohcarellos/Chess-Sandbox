@@ -1,325 +1,164 @@
 #include "interface.h"
 
-Interface::Interface(ClassicalChess& x) {
+inline void Interface::clear() {
 
-	root_ = &x;
+	system("CLS");
 }
 
-void Interface::draw_board() {
+inline void Interface::pause() {
 
-	bool foreground_white = true;
-	Tile printing;
-	
-	cout << endl;
+	system("pause");
+}
+
+void Interface::drawBoard() {
 
 	for (int i = 7; i >= 0; i--) {
-		for (int j = 0; j < 3; j++) {
 
-			if (j % 2 == 0)
-				cout << "      ";
+		cout << " " << i + 1 << " - " ;
 
-			if (j % 2 == 1)
-				cout << "  " << i + 1 << "   ";
+		for (int j = 0; j < 8; j++) {
 
-			for (int k = 0; k < 8; k++) {
+			Tile print = board_[i][j];
 
-				printing = root_->tile(i, k);
+			cout << " " << print.color() << print.type() << " ";
+		}
 
-				if ((i % 2 == 0 and k % 2 == 0) or (i % 2 == 1 and k % 2 == 1))
-					foreground_white = true;
-
-				else
-					foreground_white = false;
-
-				if (j % 2 == 0) {
-
-					if (foreground_white)
-						cout << char(176) << char(176) << char(176) << char(176) << char(176) << char(176);
-
-					else
-						cout << char(178) << char(178) << char(178) << char(178) << char(178) << char(178);
-				}
-
-				else {
-
-					if (foreground_white)
-						cout << char(176);
-
-					else
-						cout << char(178);
-
-					if (printing.color() == WHITE)
-						cout << " W";
-
-					if (printing.color() == BLACK)
-						cout << " B";
-
-					if (printing.type() == PAWN)
-						cout << "P ";
-
-					if (printing.type() == ROOK)
-						cout << "R ";
-
-					if (printing.type() == HORSE)
-						cout << "H ";
-
-					if (printing.type() == BISHOP)
-						cout << "B ";
-
-					if (printing.type() == QUEEN)
-						cout << "Q ";
-
-					if (printing.type() == KING)
-						cout << "K ";
-
-					if (printing.type() == NONE and printing.color() == NONE) {
-
-						if (foreground_white)
-							cout << char(176) << char(176) << char(176) << char(176);
-
-						else
-							cout << char(178) << char(178) << char(178) << char(178);
-					}
-
-					if (foreground_white)
-						cout << char(176);
-
-					else
-						cout << char(178);
-				}
-			}
-
-			cout << endl;
-		}	
+		cout << endl;
 	}
 
-	cout << endl;
-	cout << "        A     B     C     D     E     F     G     H " << endl;
+	cout << "      A   B   C   D   E   F   G   H" << endl;
 }
 
-void Interface::draw_moves(Tile piece, vector<Tile> moves) {
-
-	bool foreground_white = true;
-	bool inside;
-	Tile printing;
-
-	cout << endl;
+void Interface::drawBoard(Position piece, vector<Position> targets) {
 
 	for (int i = 7; i >= 0; i--) {
-		for (int j = 0; j < 3; j++) {
 
-			if (j % 2 == 0)
-				cout << "      ";
+		cout << " " << i + 1 << " - ";
 
-			if (j % 2 == 1)
-				cout << "  " << i + 1 << "   ";
+		for (int j = 0; j < 8; j++) {
 
-			for (int k = 0; k < 8; k++) {
+			bool found = false;
+			Tile print = board_[i][j];
+			Position location(i, j);
 
-				printing = root_->tile(i, k);
-				inside = false;
+			if (location == piece) {
 
-				for (Tile l : moves) {
+				cout << '[' << print.color() << print.type() << ']';
+				continue;
+			}
 
-					if (l == printing)
-						inside = true;
+			for (Position i : targets) {
+				if (location == i) {
+
+					found = true;
+					break;
 				}
+			}
 
-				if ((i % 2 == 0 and k % 2 == 0) or (i % 2 == 1 and k % 2 == 1))
-					foreground_white = true;
+			if (!found)
+				cout << " " << print.color() << print.type() << " ";
+
+			else {
+
+				if (print.empty())
+					cout << (char)176 << (char)176 << (char)176 << (char)176;
 
 				else
-					foreground_white = false;
-
-				if (j == 0) {
-
-					if (inside)
-						cout << char(177) << char(177) << char(177) << char(177) << char(177) << char(177);
-
-					else if (foreground_white) {
-
-						if (printing == piece)
-							cout << char(201) << char(205) << char(205) << char(205) << char(205) << char(187);
-
-						else
-							cout << char(176) << char(176) << char(176) << char(176) << char(176) << char(176);
-					}
-
-					else {
-
-						if (printing == piece)
-							cout << char(201) << char(205) << char(205) << char(205) << char(205) << char(187);
-
-						else
-							cout << char(178) << char(178) << char(178) << char(178) << char(178) << char(178);
-					}
-				}
-
-				if (j == 1) {
-
-					if (inside)
-						cout << char(177);
-
-					else if (printing == piece)
-						cout << char(186);
-
-					else if (foreground_white)
-						cout << char(176);
-
-					else
-						cout << char(178);
-
-					if (printing.color() == WHITE)
-						cout << " W";
-
-					if (printing.color() == BLACK)
-						cout << " B";
-
-					if (printing.type() == PAWN)
-						cout << "P ";
-
-					if (printing.type() == ROOK)
-						cout << "R ";
-
-					if (printing.type() == HORSE)
-						cout << "H ";
-
-					if (printing.type() == BISHOP)
-						cout << "B ";
-
-					if (printing.type() == QUEEN)
-						cout << "Q ";
-
-					if (printing.type() == KING)
-						cout << "K ";
-
-					if (printing.type() == NONE and printing.color() == NONE) {
-
-						if (inside)
-							cout << char(177) << char(177) << char(177) << char(177);
-
-						else if (foreground_white)
-							cout << char(176) << char(176) << char(176) << char(176);
-
-						else
-							cout << char(178) << char(178) << char(178) << char(178);
-					}
-
-					if (inside)
-						cout << char(177);
-
-					else if (printing == piece)
-						cout << char(186);
-
-					else if (foreground_white)
-						cout << char(176);
-
-					else
-						cout << char(178);
-				}
-
-				if (j == 2) {
-
-					if (inside)
-						cout << char(177) << char(177) << char(177) << char(177) << char(177) << char(177);
-
-					else if (foreground_white) {
-
-						if (printing == piece)
-							cout << char(200) << char(205) << char(205) << char(205) << char(205) << char(188);
-
-						else
-							cout << char(176) << char(176) << char(176) << char(176) << char(176) << char(176);
-					}
-
-					else {
-
-						if (printing == piece)
-							cout << char(200) << char(205) << char(205) << char(205) << char(205) << char(188);
-
-						else
-							cout << char(178) << char(178) << char(178) << char(178) << char(178) << char(178);
-					}
-				}
+					cout << (char)176 << print.color() << print.type() << (char)176;
 			}
+				
+
+		}
+
+		cout << endl;
+	}
+
+	cout << "      A   B   C   D   E   F   G   H" << endl;
+}
+
+void Interface::start() {
+
+	char turn = 'W';
+	bool mate = false;
+	bool confirm = false;
+
+	while (!mate) {
+		while (!confirm) {
+
+			string answer;
+			Position piece;
+			Position target;
+			Tile selected;
+
+			vector<Position> targets;
+
+			clear();
+			drawBoard();
 
 			cout << endl;
-		}
-	}
+			cout << " Select piece to move: ";
+			cin >> answer;
 
-	cout << endl;
-	cout << "        A     B     C     D     E     F     G     H " << endl;
-}
+			piece = Position(answer);
 
-void Interface::start_game() {
+			if (!piece.valid()) {
 
-	while (1) {
+				cout << " Invalid position\n" << endl;
+				pause();
+				break;
+			}
 
-		int choice = 0;
-		string buffer;
-		Tile piece;
-		vector<Tile> options;
+			selected = board_[piece.x()][piece.y()];
 
-		system("cls");
-		draw_board();
+			if (selected.color() == turn and !selected.empty()) {
 
-		cout << endl;
-		cout << endl;
+				targets = selected.moves();
 
-		while (choice == 0 or choice > options.size()) {
+				for (Position i : targets)
+					cout << i.x() << " " << i.y() << endl;
 
-			cout << "  Select piece to move: ";
-			cin >> buffer;
+				drawBoard(piece, targets);
 
-			piece = select_piece(notation(buffer));
+				cout << endl;
+				cout << " Select move: ";
+				cin >> answer;
 
-			options.push_back(select_piece(notation("E3")));
-			options.push_back(select_piece(notation("E4")));
+				target = Position(answer);
 
-			cout << options.size() << endl;
+				for (Position i : targets) {
 
-			if (select_piece(notation("E3")) == options[0])
-				cout << "por favor" << endl;
+					if (target == i) {
 
-			draw_moves(piece, options);
-		}
-	}
-}
+						confirm = true;
+						move(piece, target);
 
-Tile Interface::select_piece(Position pos) {
+					}
+				}
 
-	return root_->tile(pos.x(), pos.y());
-}
+				if (!confirm) {
 
-Position Interface::notation(string str) {
+					cout << " Invalid move" << endl;
+					pause();
+				}
+			}
 
-	int x;
-	int y;
+			else {
 
-	if (str.size() == 2) {
-		if (str[0] >= 'A' and str[0] <= 'H') {
-
-			y = int(str[0]) - 65;
-
-			if (str[1] >= '1' and str[1] <= '8') {
-
-				x = int(str[1]) - 49;
-
-				return Position(x, y);
+				cout << " Invalid piece" << endl;
+				pause();
 			}
 		}
-	}
 
-	throw
-		Error("Invalid notation");
+		turn = (turn == 'W') ? 'B' : 'W';
+	}
 }
 
-string Interface::notation(Position pos) {
+void Interface::move(Position piece, Position target) {
 
-	string position;
+	cout << "todo" << endl;
+}
 
-	position += char(pos.y() + 65);
-	position += char(pos.x() + 49);
+void Interface::select(Position piece) {
 
-	return position;
+	cout << "todo" << endl;
 }
