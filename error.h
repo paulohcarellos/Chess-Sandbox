@@ -9,6 +9,6 @@ class Error {
 
 public:
 
-	Error(string str) : message_(str) {}
-	string message() { return message_; }
+	Error(string msg) : message_(msg) {}
+	string message() const { return message_; }
 };

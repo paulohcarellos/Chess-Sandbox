@@ -2,23 +2,21 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "error.h"
-#include "boards.h"
+#include "board.h"
 
 using namespace std;
 
 class Interface {
 
-	ClassicalChess* root_;
+	Board* board_;
 
 public:
 
-	Interface(ClassicalChess&);
-	void draw_board();
-	void draw_moves(Tile, vector<Tile>);
-	void start_game();
-	Tile select_piece(Position);
-	Position notation(string);
-	string notation(Position);
+	Interface(Board*);
+	void clear();
+	void drawBoard();
+	void drawBoard(Position, vector<Position>);
+	void pause();
+	string print(Square) const;
 };
 
