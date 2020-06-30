@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "board.h"
+#include "history.h"
 
 using namespace std;
 
@@ -17,8 +18,10 @@ using namespace std;
 
 Board ClassicalChessBoard();
 int alternatePlayer(int);
-Position notation(string);
-string notation(Position);
+Position indentify(string);
+string describe(Square);
+string indentify(Position);
+string notation(Square, Square);
 vector<Position> bishopMoves(Square, Board);
 vector<Position> checkSuicide(Square, vector<Position>, Board);
 vector<Position> horseMoves(Square, Board);
@@ -28,3 +31,5 @@ vector<Position> pawnMoves(Square, Board);
 vector<Position> queenMoves(Square, Board);
 vector<Position> rookMoves(Square, Board);
 vector<Position> traceMoves(Position, Board);
+void checkCastle(Square, vector<Position>&, Board);
+void checkElPassant(Square, vector<Position>, Board, History);

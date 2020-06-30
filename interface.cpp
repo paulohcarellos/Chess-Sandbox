@@ -1,9 +1,10 @@
 #include "interface.h"
 #include "classicalChess.h"
 
-Interface::Interface(Board* board) {
+Interface::Interface(Board* board, History* history) {
 
 	board_ = board;
+	history_ = history;
 }
 
 void Interface::clear() {
@@ -18,103 +19,113 @@ void Interface::pause() {
 
 void Interface::drawBoard() {
 
-	clear();
+	char white = 219;
+	char black = 176;
+	char color = white;
 
-	for (int i = board_->height(); i >= 1; i--) {
+	for (int i = board_->height(), h = 1; i >= h; i--) {
 
-		cout << " " << i << " - ";
+		vector<string> row(3);
 
-		for (int j = 1, width = board_->width(); j <= width; j++) {
+		row[0] += string(7, ' ');
+		row[1] += "   " + to_string(i) + "   ";
+		row[2] += string(7, ' ');
 
-			Square square = board_->square(Position(i, j));
+		for (int j = 1, w = board_->width(); j <= w; j++) {
 
-			cout << " " << print(square) << " ";
+			row[0] += string(6, color);
+			row[2] += string(6, color);
+
+			Square printing = board_->square(Position(i, j));
+
+			if (printing.empty())
+				row[1] += string(6, color);
+
+			else
+				row[1] += string(1, color) + " " + describe(printing, *board_) + " " + color;
+
+			color = (color == white) ? black : white;
 		}
 
-		cout << endl;
+		for (string j : row)
+			cout << j << endl;
+
+		color = (color == white) ? black : white;
 	}
 
-	cout << "      A   B   C   D   E   F   G   H" << endl;
+	cout << endl;
+	cout << "         AA    BB    CC    DD    EE    FF    GG    HH" << endl;
+	cout << endl;
 }
 
 void Interface::drawBoard(Position piece, vector<Position> targets) {
 
-	clear();
+	char white = 219;
+	char black = 176;
+	char highlight = 177;
+	char color = white;	
 
-	for (int i = board_->height(); i >= 1; i--) {
+	for (int i = board_->height(), h = 1; i >= h; i--) {
 
-		cout << " " << i << " - ";
+		vector<string> row(3);
 
-		for (int j = 1, width = board_->width(); j <= width; j++) {
+		row[0] += string(7, ' ');
+		row[1] += "   " + to_string(i) + "   ";
+		row[2] += string(7, ' ');
+
+		for (int j = 1, w = board_->width(); j <= w; j++) {
 
 			bool found = false;
-			Square square = board_->square(Position(i, j));
+			Square printing = board_->square(Position(i, j));
 
-			if (square.position() == piece) {
+			for (Position k : targets) {
 
-				cout << '[' << print(square) << ']';
-				continue;
-			}
-
-			for (Position i : targets) {
-				if (square.position() == i) {
+				if (k == printing.position()) {
 
 					found = true;
 					break;
 				}
 			}
 
-			if (!found)
-				cout << " " << print(square) << " ";
+			if (!found) {
+
+				row[0] += string(6, color);
+				row[2] += string(6, color);
+
+				if (printing.empty())
+					row[1] += string(6, color);
+
+				else if (printing.position() == piece)
+					row[1] += string(1, color) + "-" + describe(printing, *board_) + "-" + color;
+
+				else
+					row[1] += string(1, color) + " " + describe(printing, *board_) + " " + color;
+			}
 
 			else {
 
-				if (square.empty())
-					cout << (char)176 << (char)176 << (char)176 << (char)176;
+				row[0] += string(6, highlight);
+				row[2] += string(6, highlight);
+
+				if (printing.empty())
+					row[1] += string(6, highlight);
 
 				else
-					cout << (char)176 << print(square) << (char)176;
+					row[1] += string(1, highlight) + " " + describe(printing, *board_) + " " + highlight;
 			}
+
+			color = (color == white) ? black : white;
 		}
 
-		cout << endl;
+		for (string j : row)
+			cout << j << endl;
+
+		color = (color == white) ? black : white;
 	}
 
-	cout << "      A   B   C   D   E   F   G   H" << endl;
-}
-
-string Interface::print(Square square) const {
-
-	if (square.empty())
-		return "  ";
-
-	string out;
-
-	if (square.color() == 1)
-		out += 'W';
-
-	if (square.color() == 2)
-		out += 'B';
-
-	if (square.type() == 1)
-		out += 'P';
-
-	if (square.type() == 2)
-		out += 'R';
-
-	if (square.type() == 3)
-		out += 'H';
-
-	if (square.type() == 4)
-		out += 'B';
-
-	if (square.type() == 5)
-		out += 'Q';
-
-	if (square.type() == 6)
-		out += 'K';
-
-	return out;
+	cout << endl;
+	cout << "         AA    BB    CC    DD    EE    FF    GG    HH" << endl;
+	cout << endl;
 }
 
 void Interface::startGame() {
@@ -140,10 +151,10 @@ void Interface::startGame() {
 			drawBoard();
 
 			cout << endl;
-			cout << " Select piece to move: ";
+			cout << "  Select piece to move: ";
 			cin >> answer;
 
-			piece = notation(answer);
+			piece = indentify(answer);
 
 			if (!piece.valid() or board_->square(piece).color() != turn)
 				break;
@@ -154,10 +165,10 @@ void Interface::startGame() {
 			drawBoard(piece, moves);
 
 			cout << endl;
-			cout << " Select move to make: ";
+			cout << "  Select move to make: ";
 			cin >> answer;
 
-			target = notation(answer);
+			target = indentify(answer);
 
 			if (!target.valid())
 				break;
@@ -167,6 +178,7 @@ void Interface::startGame() {
 				if (target == i) {
 
 					confirm = true;
+					history_->append(notation(board_->square(piece), board_->square(target);
 					board_->movePiece(piece, target);
 					break;
 				}

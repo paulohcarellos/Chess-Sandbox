@@ -41,7 +41,7 @@ int alternatePlayer(int turn) {
 	return (turn == 1) ? 2 : 1;
 }
 
-Position notation(string str) {
+Position indentify(string str) {
 
 	if (str.size() == 2 and str[0] >= 'A' and str[0] <= 'H' and str[1] >= '1' and str[1] <= '8') {
 
@@ -50,9 +50,45 @@ Position notation(string str) {
 
 		return Position(x, y);
 	}
+
+	return Position();
 }
 
-string notation(Position pos) {
+string describe(Square square) {
+
+	if (square.empty())
+		return "  ";
+
+	string out;
+
+	if (square.color() == 1)
+		out += 'W';
+
+	if (square.color() == 2)
+		out += 'B';
+
+	if (square.type() == 1)
+		out += 'P';
+
+	if (square.type() == 2)
+		out += 'R';
+
+	if (square.type() == 3)
+		out += 'H';
+
+	if (square.type() == 4)
+		out += 'B';
+
+	if (square.type() == 5)
+		out += 'Q';
+
+	if (square.type() == 6)
+		out += 'K';
+
+	return out;
+}
+
+string indentify(Position pos) {
 
 	string str;
 
@@ -60,6 +96,20 @@ string notation(Position pos) {
 	str += char(pos.x() + '1' - 1);
 
 	return str;
+}
+
+string notation(Square piece, Square target) {
+
+	string move;
+
+	move += describe(piece)[1];
+
+	if (!target.empty())
+		move += 'x';
+
+	move += indentify(target.position());
+
+	return move;
 }
 
 vector<Position> bishopMoves(Square bishop, Board board) {
@@ -415,5 +465,11 @@ vector<Position> traceMoves(Position place, Board board) {
 
 	moves = checkSuicide(piece, moves, board);
 
+	if (piece.type() == ROOK or piece.type() == KING)
+		checkCastle(piece, moves, board);
+
 	return moves;
 }
+
+void checkCastle(Square, vector<Position>&, Board);
+void checkElPassant(Square, vector<Position>, Board, History);
