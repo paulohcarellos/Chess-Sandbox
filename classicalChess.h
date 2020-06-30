@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "board.h"
 
 using namespace std;
@@ -15,10 +16,15 @@ using namespace std;
 #define BLACK  02
 
 Board ClassicalChessBoard();
+int alternatePlayer(int);
+Position notation(string);
+string notation(Position);
+vector<Position> bishopMoves(Square, Board);
+vector<Position> checkSuicide(Square, vector<Position>, Board);
+vector<Position> horseMoves(Square, Board);
+vector<Position> instantMoves(Square, Board);
+vector<Position> kingMoves(Square, Board);
+vector<Position> pawnMoves(Square, Board);
+vector<Position> queenMoves(Square, Board);
+vector<Position> rookMoves(Square, Board);
 vector<Position> traceMoves(Position, Board);
-vector<Position> pawnMoves(Position, Board);
-vector<Position> rookMoves(Position, Board);
-vector<Position> horseMoves(Position, Board);
-vector<Position> bishopMoves(Position, Board);
-vector<Position> queenMoves(Position, Board);
-vector<Position> kingMoves(Position, Board);

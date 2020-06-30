@@ -1,4 +1,5 @@
 #include "interface.h"
+#include "classicalChess.h"
 
 Interface::Interface(Board* board) {
 
@@ -114,4 +115,65 @@ string Interface::print(Square square) const {
 		out += 'K';
 
 	return out;
+}
+
+void Interface::startGame() {
+
+	char turn = 0;
+	bool checkmate = false;
+	bool confirm = false;
+
+	turn = alternatePlayer(turn);
+
+	while (!checkmate) {
+
+		confirm = false;
+
+		while (!confirm) {
+
+			string answer;
+			Position piece;
+			Position target;
+			vector<Position> moves;
+
+			clear();
+			drawBoard();
+
+			cout << endl;
+			cout << " Select piece to move: ";
+			cin >> answer;
+
+			piece = notation(answer);
+
+			if (!piece.valid() or board_->square(piece).color() != turn)
+				break;
+
+			moves = traceMoves(piece, *board_);
+
+			clear();
+			drawBoard(piece, moves);
+
+			cout << endl;
+			cout << " Select move to make: ";
+			cin >> answer;
+
+			target = notation(answer);
+
+			if (!target.valid())
+				break;
+
+			for (Position i : moves) {
+
+				if (target == i) {
+
+					confirm = true;
+					board_->movePiece(piece, target);
+					break;
+				}
+			}
+		}
+
+		if (confirm)
+			turn = alternatePlayer(turn);
+	}
 }

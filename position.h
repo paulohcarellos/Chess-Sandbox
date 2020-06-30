@@ -13,6 +13,7 @@ public:
 	int x() const { return x_; }
 	int y() const { return y_; }
 	bool operator==(const Position& p) { return (x_ == p.x_ and y_ == p.y_) ? true : false; }
+	bool valid() { return (*this == Position()) ? false : true; }
 	Position up() const { return Position(x_ + 1, y_); }
 	Position down() const { return Position(x_ - 1, y_); }
 	Position left() const { return Position(x_, y_ - 1); }

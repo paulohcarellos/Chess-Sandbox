@@ -17,6 +17,7 @@ public:
 	void drawBoard();
 	void drawBoard(Position, vector<Position>);
 	void pause();
+	void startGame();
 	string print(Square) const;
 };
 

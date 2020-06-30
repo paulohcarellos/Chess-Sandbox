@@ -44,7 +44,8 @@ void Square::receive(int color, int type) {
 
 void Square::clear() {
 
-	color_, type_ = 0;
+	color_ = 0;
+	type_ = 0;
 }
 
 bool Square::fresh() const {
